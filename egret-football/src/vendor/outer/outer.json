@@ -1,0 +1,8 @@
+{
+  "name": "Outer",
+  "source":".",
+  "file_list": [
+    "outer.js",
+    "outer.d.ts"
+  ]
+}
