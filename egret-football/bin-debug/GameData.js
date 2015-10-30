@@ -5,6 +5,24 @@ var GameData = (function () {
     var d = __define,c=GameData;p=c.prototype;
     //重置参数
     GameData.reset = function () {
+        GameData.ballRangle = 5; //足球的自转速度
+        GameData.ballBaseRangle = 5; //足球的自转速度
+        GameData.ballSpeed = 10; //足球的前进速度,档次分别是0~10
+        GameData.ballState = "empty"; //足球当状态
+        GameData.attackType = ""; //Hero攻击的类型
+        GameData.attackOver = true; //标示攻击是否完成，能否进行第二次攻击
+        GameData.hadHit = false; //标示该次踢球是否已经命中目标
+        GameData.score = 0;
+        GameData.goldChance = 0.5; //获取金币的概率
+        GameData.enemyNum = 6; //共设4个敌人
+        GameData.enemyTypeNum = 4; //敌人的类型数量
+        GameData.enemyFlashSpeed = 5; //刷新加快的步长
+        GameData.enemyFlashSpace = 500; //刷新敌人的时间间隔
+        GameData.enemyFlashLestSpace = 100; //最快刷新敌人的时间间隔
+        GameData.firstX = 999; //标示距离Hero最近的enemy的X坐标
+        GameData.enemyLestNum = 0; //标示还存活的敌人数量
+        GameData.isEnter = false; //标示是否有enemy完成进入战区
+        GameData.backgroundSpeed = 3;
     };
     //加载数据
     GameData.loadData = function () {
@@ -31,14 +49,24 @@ var GameData = (function () {
     GameData.gameOver = false; //标示游戏结束
     GameData.heroName = "Hero1";
     GameData.ballRangle = 5; //足球的自转速度
-    GameData.ballSpeed = 0; //足球的前进速度,档次分别是0~10
-    GameData.ballDirection = "right"; //足球的移动方向
+    GameData.ballBaseRangle = 5; //足球的自转速度
+    GameData.ballSpeed = 10; //足球的前进速度,档次分别是0~10
+    GameData.ballState = "empty"; //足球当状态
     GameData.attackType = ""; //Hero攻击的类型
     GameData.attackOver = true; //标示攻击是否完成，能否进行第二次攻击
+    GameData.hadHit = false; //标示该次踢球是否已经命中目标
     GameData.score = 0;
     GameData.goldNum = 0;
     GameData.goldChance = 0.5; //获取金币的概率
-    GameData.enemyTypeNum = 1;
+    GameData.enemyNum = 6; //共设4个敌人
+    GameData.enemyTypeNum = 4; //敌人的类型数量
+    GameData.enemyFlashSpeed = 5; //刷新加快的步长
+    GameData.enemyFlashSpace = 500; //刷新敌人的时间间隔
+    GameData.enemyFlashLestSpace = 100; //最快刷新敌人的时间间隔
+    GameData.firstX = 999; //标示距离Hero最近的enemy的X坐标
+    GameData.enemyLestNum = 0; //标示还存活的敌人数量
+    GameData.isEnter = false; //标示是否有enemy完成进入战区
+    GameData.backgroundSpeed = 3;
     GameData.Hero1 = {
         "activation": true,
         "name": "Hero1",
@@ -68,11 +96,15 @@ var GameData = (function () {
         "scaleX": 1,
         "scaleY": 1,
         "run": {
-            offsetX: 700,
+            offsetX: 40,
+            offsetY: 300
+        },
+        "right": {
+            offsetX: 120,
             offsetY: 300
         },
         "die": {
-            offsetX: 700,
+            offsetX: 40,
             offsetY: 300
         }
     };
@@ -81,11 +113,15 @@ var GameData = (function () {
         "scaleX": 1,
         "scaleY": 1,
         "run": {
-            offsetX: 700,
+            offsetX: 40,
+            offsetY: 290
+        },
+        "right": {
+            offsetX: 120,
             offsetY: 290
         },
         "die": {
-            offsetX: 710,
+            offsetX: 50,
             offsetY: 295
         }
     };
@@ -94,11 +130,15 @@ var GameData = (function () {
         "scaleX": 1,
         "scaleY": 1,
         "run": {
-            offsetX: 680,
+            offsetX: 20,
+            offsetY: 285
+        },
+        "right": {
+            offsetX: 75,
             offsetY: 285
         },
         "die": {
-            offsetX: 680,
+            offsetX: 240,
             offsetY: 260
         }
     };
@@ -107,11 +147,15 @@ var GameData = (function () {
         "scaleX": 1,
         "scaleY": 1,
         "run": {
-            offsetX: 660,
+            offsetX: 0,
+            offsetY: 290
+        },
+        "right": {
+            offsetX: 110,
             offsetY: 290
         },
         "die": {
-            offsetX: 660,
+            offsetX: 0,
             offsetY: 265
         }
     };
