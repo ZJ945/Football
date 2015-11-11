@@ -8,14 +8,14 @@ var Main = (function (_super) {
     var d = __define,c=Main;p=c.prototype;
     p.onAddToStage = function (event) {
         Main.Stage = this;
-        meiriq.CommonComponent.instance.init("yuanshuzhanzheng", this.stage);
+        meiriq.CommonComponent.instance.init("football", this.stage);
         meiriq.CommonComponent.instance.load(function () {
             GameData.loadData();
             GameData.reset();
-            //UIManage.getInstance().showWelcome();
+            UIManage.getInstance().showWelcome();
             //UIManage.getInstance().showSelect();
-            UIManage.getInstance().showGame();
-        }, this, ["game", "hero", "enemy"], "default.res.json");
+            //UIManage.getInstance().showGame();
+        }, this, ["welcome", "select", "game", "hero", "enemy"], "default.res.json");
     };
     return Main;
 })(egret.DisplayObjectContainer);

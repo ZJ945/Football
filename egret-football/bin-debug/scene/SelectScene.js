@@ -10,15 +10,17 @@ var SelectScene = (function (_super) {
     var d = __define,c=SelectScene;p=c.prototype;
     p.init = function () {
         this.background = Tool.addBitmap(this, "select_background_png", 0, 0, 0, 0, false);
-        this.goldIcon = Tool.addBitmap(this, "select_gold_png", 25, 20, 50, 50, false);
-        this.people = Tool.addBitmap(this, "select_Hero1_png", 0, 180, 200, 200, false);
-        this.left = Tool.addBitmap(this, "select_left_png", 35, 240, 70, 80, true);
-        this.right = Tool.addBitmap(this, "select_right_png", 370, 240, 70, 80, true);
-        this.start = Tool.addBitmap(this, "start0_png", 275, 430, 180, 70, true);
-        this.costIcon = Tool.addBitmap(this, "select_gold_png", 220, 95, 50, 50, false);
-        this.text = Tool.addBitmap(this, "select_text_png", 130, 100, 80, 40, false);
-        this.CostNum = Tool.addBitmapText(this, "number_fnt", 275, 102, 150, 50, "99999");
-        this.GoldNum = Tool.addBitmapText(this, "number_fnt", 80, 30, 150, 50, "99999");
+        this.goldIcon = Tool.addBitmap(this, "select_gold_png", 600, 20, 50, 50, false);
+        this.box = Tool.addBitmap(this, "select_box_png", 265, 100, 300, 300, false);
+        this.people = Tool.addBitmap(this, "select_Hero1_png", 300, 110, 200, 300, false);
+        this.left = Tool.addBitmap(this, "select_left_png", 35, 190, 70, 80, true);
+        this.right = Tool.addBitmap(this, "select_right_png", 690, 190, 70, 80, true);
+        this.start = Tool.addBitmap(this, "start0_png", 275, 410, 150, 55, true);
+        this.costIcon = Tool.addBitmap(this, "select_gold_png", 420, 60, 50, 50, false);
+        this.text = Tool.addBitmap(this, "select_text_png", 340, 65, 70, 35, false);
+        this.text2 = Tool.addBitmap(this, "select_text2_png", 323, 200, 200, 100, false);
+        this.CostNum = Tool.addBitmapText(this, "number_fnt", 485, 65, 150, 50, "99999");
+        this.GoldNum = Tool.addBitmapText(this, "number_fnt", 660, 28, 150, 50, "99999");
         //设置各元素的位置
         this.left.alpha = 0.5;
         this.width = GameData.gameWidth;
@@ -30,13 +32,14 @@ var SelectScene = (function (_super) {
         this.GoldNum.text = GameData.goldNum + "";
         this.getRole(this.nameList[this.nameIndex]);
         this.text.visible = false;
+        this.text2.visible = false;
         this.CostNum.visible = false;
         this.costIcon.visible = false;
     };
     p.onTouchStart = function (e) {
         e.stopImmediatePropagation();
         if (e.target == this.start) {
-            if (this.data.activation == false)
+            if (GameData.heroList[this.nameIndex] == false)
                 this.start.texture = RES.getRes("unlock1_png");
             else
                 this.start.texture = RES.getRes("start1_png");
@@ -54,17 +57,19 @@ var SelectScene = (function (_super) {
     };
     //点击开始按钮
     p.onClickStart = function () {
-        if (this.data.activation == false) {
-            if (GameData[this.nameList[this.nameIndex]].cost > GameData.goldNum) {
+        if (GameData.heroList[this.nameIndex] == false) {
+            if (500 > GameData.goldNum) {
                 this.start.texture = RES.getRes("unlock0_png");
+                this.people.visible = false;
+                this.text2.visible = true;
                 return;
             }
             this.text.visible = false;
             this.CostNum.visible = false;
             this.costIcon.visible = false;
-            GameData.goldNum -= GameData[this.nameList[this.nameIndex]].cost;
+            GameData.goldNum -= 500;
             this.GoldNum.text = GameData.goldNum + "";
-            this.data.activation = true;
+            GameData.heroList[this.nameIndex] = true;
             this.start.texture = RES.getRes("start0_png");
         }
         else {
@@ -106,10 +111,12 @@ var SelectScene = (function (_super) {
     };
     //获取角色信息
     p.getRole = function (name) {
-        GameData.heroName = GameData[this.nameList[this.nameIndex]].name;
-        this.data = GameData[name];
-        this.people.texture = RES.getRes("select_" + this.data.name + "_png");
-        if (this.data.activation == true) {
+        GameData.heroName = "Hero" + (this.nameIndex + 1);
+        this.text2.visible = false;
+        this.people.visible = true;
+        this.people.texture = RES.getRes("select_" + GameData.heroName + "_png");
+        console.log("this.nameIndex   " + this.nameIndex + "   " + GameData.heroList[this.nameIndex] + "   " + (GameData.heroList[this.nameIndex] == true));
+        if (GameData.heroList[this.nameIndex] == true) {
             this.text.visible = false;
             this.CostNum.visible = false;
             this.costIcon.visible = false;
@@ -119,7 +126,7 @@ var SelectScene = (function (_super) {
             this.text.visible = true;
             this.CostNum.visible = true;
             this.costIcon.visible = true;
-            this.CostNum.text = GameData[this.nameList[this.nameIndex]].cost + "";
+            this.CostNum.text = "500";
             this.start.texture = RES.getRes("unlock0_png");
         }
     };

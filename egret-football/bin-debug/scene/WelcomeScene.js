@@ -4,6 +4,7 @@ var WelcomeScene = (function (_super) {
     function WelcomeScene() {
         _super.call(this);
         this.startOrSelect = "";
+        this.instrutionIndex = 0; //��ʾ��Ϸ˵��ҳ��״̬
         this.init();
     }
     var d = __define,c=WelcomeScene;p=c.prototype;
@@ -11,13 +12,11 @@ var WelcomeScene = (function (_super) {
         this.welcome_background = Tool.addBitmap(this, "welcome_background_png", 0, 0, GameData.gameWidth, GameData.gameHeight, false);
         this.welcome_background.width = GameData.gameWidth;
         this.welcome_background.height = GameData.gameHeight;
-        this.welcome_tip = Tool.addBitmap(this, "welcome_tip_png", 0, 690, 300, 90, true);
-        this.welcome_tip.x = (this.width - this.welcome_tip.width) / 2;
-        this.welcome_start = Tool.addBitmap(this, "welcome_start0_png", 0, 680, 150, 50, true);
+        this.welcome_start = Tool.addBitmap(this, "welcome_start0_png", 0, 240, 150, 50, true);
         this.welcome_start.x = (this.width - this.welcome_start.width) / 2;
-        this.welcome_select = Tool.addBitmap(this, "welcome_select0_png", 0, 745, 150, 50, true);
+        this.welcome_select = Tool.addBitmap(this, "welcome_select0_png", 0, 320, 150, 50, true);
         this.welcome_select.x = (this.width - this.welcome_select.width) / 2;
-        this.instrution = Tool.addBitmap(this, "instrution_png", 0, 0, GameData.gameWidth, GameData.gameHeight, true);
+        this.instrution = Tool.addBitmap(this, "instrution0_jpg", 0, 0, GameData.gameWidth, GameData.gameHeight, true);
         this.instrution.width = GameData.gameWidth;
         this.instrution.height = GameData.gameHeight;
         this.instrution.visible = false;
@@ -36,9 +35,13 @@ var WelcomeScene = (function (_super) {
     //�����¼�����Ӧ����
     p.onTouchEnd = function (e) {
         e.stopImmediatePropagation();
-        if (!Tool.checkLocal("muyewar_first")) {
-            Tool.setLocal("muyewar_first", "true");
+        if (!Tool.checkLocal("football_first")) {
             this.instrution.visible = true;
+            if (this.instrutionIndex > 0) {
+                this.instrution.texture = RES.getRes("instrution1_jpg");
+                Tool.setLocal("football_first", "true");
+            }
+            this.instrutionIndex++;
             return;
         }
         if (e.target == this.welcome_start) {

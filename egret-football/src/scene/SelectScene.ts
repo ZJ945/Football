@@ -1,6 +1,7 @@
 //角色选择页面
 class SelectScene extends egret.DisplayObjectContainer {
     private background:egret.Bitmap;//背景
+    private box:egret.Bitmap;//待选择的人物
     private people:egret.Bitmap;//待选择的人物
     private left:egret.Bitmap;//左箭头
     private right:egret.Bitmap;//右箭头
@@ -8,11 +9,11 @@ class SelectScene extends egret.DisplayObjectContainer {
     private goldIcon:egret.Bitmap;//玩家拥有的金币图标
     private costIcon:egret.Bitmap;//解锁需要金币图标
     private text:egret.Bitmap;//解锁需要金币图标
+    private text2:egret.Bitmap;//不够钱的提示
 
     private GoldNum:egret.BitmapText;//玩家拥有的金币数
     private CostNum:egret.BitmapText;//解锁所需金币数
 
-    private data:any;//保存从GameData中获取的人物初始数值
     private nameList = ["Hero1", "Hero2", "Hero3"];//角色列表
     private nameIndex:number = 0;//标示当前选择的人物的下标
 
@@ -23,15 +24,17 @@ class SelectScene extends egret.DisplayObjectContainer {
 
     public init():void {
         this.background = Tool.addBitmap(this, "select_background_png", 0, 0, 0, 0, false);
-        this.goldIcon = Tool.addBitmap(this, "select_gold_png", 25, 20, 50, 50, false);
-        this.people = Tool.addBitmap(this, "select_Hero1_png", 0, 180, 200, 200, false);
-        this.left = Tool.addBitmap(this, "select_left_png", 35, 240, 70, 80, true);
-        this.right = Tool.addBitmap(this, "select_right_png", 370, 240, 70, 80, true);
-        this.start = Tool.addBitmap(this, "start0_png", 275, 430, 180, 70, true);
-        this.costIcon = Tool.addBitmap(this, "select_gold_png", 220, 95, 50, 50, false);
-        this.text = Tool.addBitmap(this, "select_text_png", 130, 100, 80, 40, false);
-        this.CostNum = Tool.addBitmapText(this, "number_fnt", 275, 102, 150, 50, "99999");
-        this.GoldNum = Tool.addBitmapText(this, "number_fnt", 80, 30, 150, 50, "99999");
+        this.goldIcon = Tool.addBitmap(this, "select_gold_png", 600, 20, 50, 50, false);
+        this.box = Tool.addBitmap(this, "select_box_png", 265, 100, 300, 300, false);
+        this.people = Tool.addBitmap(this, "select_Hero1_png", 300, 110, 200, 300, false);
+        this.left = Tool.addBitmap(this, "select_left_png", 35, 190, 70, 80, true);
+        this.right = Tool.addBitmap(this, "select_right_png", 690, 190, 70, 80, true);
+        this.start = Tool.addBitmap(this, "start0_png", 275, 410, 150, 55, true);
+        this.costIcon = Tool.addBitmap(this, "select_gold_png", 420, 60, 50, 50, false);
+        this.text = Tool.addBitmap(this, "select_text_png", 340, 65, 70, 35, false);
+        this.text2 = Tool.addBitmap(this, "select_text2_png", 323, 200, 200, 100, false);
+        this.CostNum = Tool.addBitmapText(this, "number_fnt", 485, 65, 150, 50, "99999");
+        this.GoldNum = Tool.addBitmapText(this, "number_fnt", 660, 28, 150, 50, "99999");
 
         //设置各元素的位置
         this.left.alpha = 0.5;
@@ -46,6 +49,7 @@ class SelectScene extends egret.DisplayObjectContainer {
         this.getRole(this.nameList[this.nameIndex]);
 
         this.text.visible = false;
+        this.text2.visible = false;
         this.CostNum.visible = false;
         this.costIcon.visible = false;
     }
@@ -53,7 +57,7 @@ class SelectScene extends egret.DisplayObjectContainer {
     public onTouchStart(e:egret.TouchEvent):void {
         e.stopImmediatePropagation();
         if (e.target == this.start) {
-            if (this.data.activation == false) this.start.texture = RES.getRes("unlock1_png");
+            if (GameData.heroList[this.nameIndex] == false) this.start.texture = RES.getRes("unlock1_png");
             else this.start.texture = RES.getRes("start1_png");
         }
     }
@@ -68,17 +72,19 @@ class SelectScene extends egret.DisplayObjectContainer {
 
     //点击开始按钮
     public onClickStart():void {
-        if (this.data.activation == false) {//该角色还未激活
-            if (GameData[this.nameList[this.nameIndex]].cost > GameData.goldNum) {
+        if (GameData.heroList[this.nameIndex] == false) {//该角色还未激活
+            if (500 > GameData.goldNum) {
                 this.start.texture = RES.getRes("unlock0_png");
+                this.people.visible = false;
+                this.text2.visible = true;
                 return;
             }
             this.text.visible = false;
             this.CostNum.visible = false;
             this.costIcon.visible = false;
-            GameData.goldNum -= GameData[this.nameList[this.nameIndex]].cost;
+            GameData.goldNum -= 500;
             this.GoldNum.text = GameData.goldNum + "";
-            this.data.activation = true;
+            GameData.heroList[this.nameIndex] = true;
             this.start.texture = RES.getRes("start0_png");
         }
         else {//该角色已经激活
@@ -118,10 +124,12 @@ class SelectScene extends egret.DisplayObjectContainer {
 
     //获取角色信息
     public getRole(name:string):void {
-        GameData.heroName = GameData[this.nameList[this.nameIndex]].name;
-        this.data = GameData[name];
-        this.people.texture = RES.getRes("select_" + this.data.name + "_png");
-        if (this.data.activation == true) {
+        GameData.heroName = "Hero" + (this.nameIndex + 1);
+        this.text2.visible = false;
+        this.people.visible = true;
+        this.people.texture = RES.getRes("select_" + GameData.heroName + "_png");
+        console.log("this.nameIndex   " + this.nameIndex + "   " + GameData.heroList[this.nameIndex] + "   " + (GameData.heroList[this.nameIndex] == true));
+        if (GameData.heroList[this.nameIndex] == true) {
             this.text.visible = false;
             this.CostNum.visible = false;
             this.costIcon.visible = false;
@@ -131,7 +139,7 @@ class SelectScene extends egret.DisplayObjectContainer {
             this.text.visible = true;
             this.CostNum.visible = true;
             this.costIcon.visible = true;
-            this.CostNum.text = GameData[this.nameList[this.nameIndex]].cost + "";
+            this.CostNum.text = "500";
             this.start.texture = RES.getRes("unlock0_png");
         }
     }
