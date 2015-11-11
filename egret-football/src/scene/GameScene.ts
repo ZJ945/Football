@@ -18,6 +18,22 @@ class GameScene extends egret.DisplayObjectContainer {
     }
 
     public init():void {
+        meiriq.CommonComponent.instance.executedHook("start");
+
+        ////组件暴露全局函数
+        meiriq.CommonComponent.instance.implementsInterFace("home", //暴露的方法名
+            function () {
+                UIManage.getInstance().hideGame();
+                UIManage.getInstance().showWelcome();
+            }, this);                                                   //回调函数上下文
+        meiriq.CommonComponent.instance.implementsInterFace("pause", function () {
+            this.removeEventListener(egret.Event.ENTER_FRAME, this.flashGame, this);
+        }, this);
+        meiriq.CommonComponent.instance.implementsInterFace("resume", function () {
+            this.addEventListener(egret.Event.ENTER_FRAME, this.flashGame, this);
+        }, this);
+
+
         this.addEventListener(egret.Event.ENTER_FRAME, this.flashGame, this);
         this.addEventListener(egret.Event.REMOVED_FROM_STAGE, this.onRemove, this);
         this.background1 = Tool.addBitmap(this, "game_background1_png", 0, 0, 1000, 480, true);

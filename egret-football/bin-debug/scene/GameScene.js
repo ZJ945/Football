@@ -9,6 +9,18 @@ var GameScene = (function (_super) {
     }
     var d = __define,c=GameScene;p=c.prototype;
     p.init = function () {
+        meiriq.CommonComponent.instance.executedHook("start");
+        ////������¶ȫ�ֺ���
+        meiriq.CommonComponent.instance.implementsInterFace("home", function () {
+            UIManage.getInstance().hideGame();
+            UIManage.getInstance().showWelcome();
+        }, this); //�ص�����������
+        meiriq.CommonComponent.instance.implementsInterFace("pause", function () {
+            this.removeEventListener(egret.Event.ENTER_FRAME, this.flashGame, this);
+        }, this);
+        meiriq.CommonComponent.instance.implementsInterFace("resume", function () {
+            this.addEventListener(egret.Event.ENTER_FRAME, this.flashGame, this);
+        }, this);
         this.addEventListener(egret.Event.ENTER_FRAME, this.flashGame, this);
         this.addEventListener(egret.Event.REMOVED_FROM_STAGE, this.onRemove, this);
         this.background1 = Tool.addBitmap(this, "game_background1_png", 0, 0, 1000, 480, true);
